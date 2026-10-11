@@ -398,7 +398,6 @@ function render(){
     if (val === null || String(val).trim() === '') continue;
     const strVal = String(val).trim();
     
-    // لێرەدا پشکنین بۆ لینک دەکەین و لە پشتەوە هەڵیدەگرین بەبێ ئەوەی لە دیزایندا وەک لینک دەربکەوێت
     if (strVal.startsWith('http://') || strVal.startsWith('https://')) {
       otpLink = strVal;
       continue;
@@ -438,7 +437,6 @@ function render(){
 
   html += '</div>';
 
-  // بەشی OTP کە تەنها خانەی کۆد و دوگمەی نوێکردنەوە پیشان دەدات و هیچ لینکێک نیشان نادات
   if (otpLink) {
     html += `
       <div class="otp-box" data-otp-url="${esc(otpLink)}">
@@ -496,6 +494,7 @@ function render(){
     if (updateBtnEl) {
       updateBtnEl.onclick = () => {
         updateBtnEl.classList.add('spinning');
+        // لێرەدا فەنکشنەکە بە مەرجی isManual=true بانگ دەکەین تا هەمیشە دەستبەجێ دووبارە کۆدەکە بهێنێت
         fetchOtp(otpLink, true);
         setTimeout(() => updateBtnEl.classList.remove('spinning'), 600);
       };
@@ -538,7 +537,7 @@ function render(){
   });
 }
 
-// فەنکشنی هێنانی کۆد بە بێ نیشاندانی لینک لەسەر شاشە
+// فەنکشنی نوێکراوە کە بە مەرجی isManual ڕاستەوخۆ نوێترین کۆد دەهێنێت تەنانەت ئەگەر دووبارەش بێت
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
@@ -560,8 +559,9 @@ async function fetchOtp(url, isManual = false) {
     }
 
     if (codeVal) {
+      // ئەگەر دەستکاری کرابێت (isManual) یان کۆدەکە گۆڕابێت، ڕەفتار دەکات
       if (codeVal !== lastDetectedOtp || isManual) {
-        if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '') {
+        if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '' && !isManual) {
           playNotificationSound();
         }
         lastDetectedOtp = codeVal;
