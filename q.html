@@ -562,7 +562,7 @@ function updateCountdownDisplay() {
   }
 }
 
-// فەنکشنی خێرا کە بێ جیاوازی هەر لینکێک بێت دەیخوێنێتەوە و کۆدەکان دەردەهێنێت
+// فەنکشنی زیرەک: تەنها کاتێک کۆدەکە دەگۆڕێت کە لە پشتەوە کۆدی نوێ هاتبن، ئەگەر نا هەمان کۆدی پێشوو بە جێگیری دەهێڵێتەوە
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
@@ -615,20 +615,34 @@ async function fetchOtp(url, isManual = false) {
     }
 
     if (codeVal) {
-      if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '' && !isManual) {
-        playNotificationSound();
-      }
-      lastDetectedOtp = codeVal;
+      // لێرەدا پشکنین دەکەین: ئەگەر کۆدەکە نوێ بوو یان یەکەم جار بوو دەیهێنێت، ئەگەر نەگۆڕابوو دەستکاری ناکات
+      if (codeVal !== lastDetectedOtp) {
+        if (lastDetectedOtp !== '' && !isManual) {
+          playNotificationSound();
+        }
+        lastDetectedOtp = codeVal;
 
-      row.innerHTML = `
-        <div class="otp-val">${esc(codeVal)}</div>
-        <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
-      `;
-      row.querySelector('.copy').onclick = function() {
-        const b = this;
-        const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
-        if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
-      };
+        row.innerHTML = `
+          <div class="otp-val">${esc(codeVal)}</div>
+          <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
+        `;
+        row.querySelector('.copy').onclick = function() {
+          const b = this;
+          const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+          if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+        };
+      } else if (!row.querySelector('.otp-val')) {
+        // ئەگەر بۆ یەکەمجارە خانەکە خاڵی بوو
+        row.innerHTML = `
+          <div class="otp-val">${esc(codeVal)}</div>
+          <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
+        `;
+        row.querySelector('.copy').onclick = function() {
+          const b = this;
+          const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+          if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+        };
+      }
     } else if (!row.querySelector('.otp-val')) {
       row.innerHTML = `<div class="otp-empty">${t.otpWait}</div>`;
     }
