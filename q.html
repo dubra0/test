@@ -103,6 +103,8 @@ html[dir="ltr"] .modal-text{text-align:left}
 .update-btn svg{width:13px;height:13px;transition:transform .4s}
 .update-btn.spinning svg{transform:rotate(360deg)}
 
+.countdown-badge{font-family:var(--f-en);font-size:.72rem;font-weight:800;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:6px 10px;direction:ltr}
+
 .otp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:10px 14px}
 .otp-val{font-family:var(--f-en);font-size:1.2rem;font-weight:900;color:#34d399;letter-spacing:.1em;direction:ltr}
 .otp-empty{font-size:.82rem;color:var(--muted);font-weight:700;text-align:center;padding:6px;width:100%}
@@ -300,7 +302,8 @@ const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return
 let lang = store.get('dubra_lang') || null;
 let state = { kind: 'loading' };
 let lastDetectedOtp = '';
-let autoRefreshInterval = null;
+let countdownTimer = null;
+let secondsLeft = 20;
 
 function playNotificationSound() {
   try {
@@ -447,6 +450,7 @@ function render(){
             <span>${t.otpTitle}</span>
           </div>
           <div class="otp-actions">
+            <span class="countdown-badge" id="countdownBadge">20s</span>
             <button class="update-btn" id="updateOtpBtn" type="button" title="Refresh">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span>${t.updateBtn}</span>
@@ -500,14 +504,22 @@ function render(){
       };
     }
     
-    // هێنانی یەکەمی کۆد بە خێرایی
+    // هێنانی یەکەمی کۆد
     fetchOtp(otpLink, true);
 
-    // ڕێکخستنی کاتژمێری خۆکار بۆ ئەوەی هەر 20 چرکە جارێک بێ دەستکاری بەخۆڕایی نوێ بێتەوە
-    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-    autoRefreshInterval = setInterval(() => {
-      fetchOtp(otpLink, true);
-    }, 20000);
+    // دەستپێکردنی کاتژمێری ژماردنی چرکەکان و نوێکردنەوەی خۆکار
+    if (countdownTimer) clearInterval(countdownTimer);
+    secondsLeft = 20;
+    updateCountdownDisplay();
+
+    countdownTimer = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        fetchOtp(otpLink, true);
+        secondsLeft = 20;
+      }
+      updateCountdownDisplay();
+    }, 1000);
   }
 
   supportContainer.innerHTML = `
@@ -545,11 +557,24 @@ function render(){
   });
 }
 
-// فەنکشنی خێرا بۆ هێنانی کۆد بە تێکەڵکردنی چەند پرۆکسییەک بۆ ئەوەی لە کەمترین کاتدا وەڵام بداتەوە
+function updateCountdownDisplay() {
+  const badge = document.getElementById('countdownBadge');
+  if (badge) {
+    badge.textContent = secondsLeft + 's';
+  }
+}
+
+// فەنکشنی خێرا بۆ هێنانی کۆد بە بەکارهێنانی فرە-پرۆکسی
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
   const t = T[lang || 'ku'];
+
+  // کاتێک بە دەست دەیگۆڕیت، کاتژمێری 20 چرکەییەکە سەرلەنوێ دەست پێدەکاتەوە
+  if (isManual) {
+    secondsLeft = 20;
+    updateCountdownDisplay();
+  }
 
   const noCacheUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
   const proxyUrls = [
@@ -559,7 +584,6 @@ async function fetchOtp(url, isManual = false) {
   ];
 
   let text = '';
-  // بەکارهێنانی Promise.any بۆ ئەوەی خێرا ترین پرۆکسی وەڵام بداتەوە و چاوەڕێی ئەوی تر نەکەین
   try {
     const promises = proxyUrls.map(pUrl => 
       fetch(pUrl, { cache: 'no-store' }).then(res => {
@@ -569,7 +593,6 @@ async function fetchOtp(url, isManual = false) {
     );
     text = await Promise.any(promises);
   } catch(e) {
-    // ئەگەر هەموو پرۆکسییە خێراکان کێشەیان هەبوو، یەکێکیان بە ڕێگای ئاسایی تاقی دەکەینەوە
     for (let i = 0; i < proxyUrls.length; i++) {
       try {
         const res = await fetch(proxyUrls[i], { cache: 'no-store' });
