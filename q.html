@@ -498,7 +498,6 @@ function render(){
         setTimeout(() => updateBtnEl.classList.remove('spinning'), 600);
       };
     }
-    // خوێندنەوەی بەستەری OTP لە کاتی بارکردنەوەدا
     fetchOtp(otpLink, false);
   }
 
@@ -537,13 +536,14 @@ function render(){
   });
 }
 
-// فەنکشنی پشکنین و خوێندنەوەی بەستەری OTP
+// فەنکشنی نوێکراوە بۆ خوێندنەوەی بەستەرەکان و تێپەڕاندنی CORS
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
   const t = T[lang || 'ku'];
   try {
-    const res = await fetch(url, { cache: 'no-store' });
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    const res = await fetch(proxyUrl, { cache: 'no-store' });
     const text = await res.text();
     let codeVal = '';
     const m = text.match(/\b\d{4,8}\b/);
@@ -574,8 +574,16 @@ async function fetchOtp(url, isManual = false) {
         const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
         if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
       };
+    } else {
+      row.innerHTML = `
+        <a href="${esc(url)}" target="_blank" style="color:#34d399;font-weight:700;font-size:0.9rem;text-decoration:underline">کردنەوەی بەستەری OTP لە پەڕەیەکی نوێ</a>
+      `;
     }
-  } catch(e) {}
+  } catch(e) {
+    row.innerHTML = `
+      <a href="${esc(url)}" target="_blank" style="color:#34d399;font-weight:700;font-size:0.9rem;text-decoration:underline">کردنەوەی بەستەری OTP لە پەڕەیەکی نوێ</a>
+    `;
+  }
 }
 
 document.addEventListener('click', async e => {
