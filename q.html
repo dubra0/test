@@ -504,10 +504,8 @@ function render(){
       };
     }
     
-    // هێنانی یەکەمی کۆد
     fetchOtp(otpLink, true);
 
-    // دەستپێکردنی کاتژمێری ژماردنی چرکەکان و نوێکردنەوەی خۆکار
     if (countdownTimer) clearInterval(countdownTimer);
     secondsLeft = 20;
     updateCountdownDisplay();
@@ -564,13 +562,12 @@ function updateCountdownDisplay() {
   }
 }
 
-// فەنکشنی خێرا بۆ هێنانی کۆد بە بەکارهێنانی فرە-پرۆکسی
+// فەنکشنی خێرا کە بێ جیاوازی هەر لینکێک بێت دەیخوێنێتەوە و کۆدەکان دەردەهێنێت
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
   const t = T[lang || 'ku'];
 
-  // کاتێک بە دەست دەیگۆڕیت، کاتژمێری 20 چرکەییەکە سەرلەنوێ دەست پێدەکاتەوە
   if (isManual) {
     secondsLeft = 20;
     updateCountdownDisplay();
