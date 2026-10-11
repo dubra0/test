@@ -374,70 +374,6 @@ function updateTexts() {
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
 }
 
-// دابەزاندنی زانیارییەکان لە سرڤەر و خوێندنەوەی بەستەرەکان
-async function loadData() {
-  if (!code) {
-    state = { kind: 'error', msg: 'invalid' };
-    render();
-    return;
-  }
-  state = { kind: 'loading' };
-  render();
-
-  try {
-    const res = await fetch(SUPABASE_API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': KEY,
-        'Authorization': 'Bearer ' + KEY
-      },
-      body: JSON.stringify({ code_input: code })
-    });
-    
-    if (!res.ok) throw new Error('Network error');
-    const json = await res.json();
-    
-    if (!json || (Array.isArray(json) && json.length === 0) || (json.error)) {
-      state = { kind: 'error', msg: 'invalid' };
-    } else {
-      state = { kind: 'success', data: Array.isArray(json) ? json[0] : json };
-    }
-  } catch (err) {
-    state = { kind: 'error', msg: 'net' };
-  }
-  render();
-}
-
-// بەشی وەرگرتنی کۆد یان ناوەڕۆکی بەستەری OTP
-async function fetchOtp(url, isManual = false) {
-  const otpRow = document.getElementById('otpRow');
-  if (!otpRow) return;
-
-  if (isManual) {
-    otpRow.innerHTML = `<div class="otp-empty">${T[lang || 'ku'].supWait}</div>`;
-  }
-
-  try {
-    // دەتوانرێت فێتچ بۆ لینکەکە بکرێت ئەگەر ڕێگەپێدراو بێت
-    const res = await fetch(url);
-    const text = await res.text();
-    
-    if (text) {
-      if (lastDetectedOtp !== text && lastDetectedOtp !== '') {
-        playNotificationSound();
-      }
-      lastDetectedOtp = text;
-      otpRow.innerHTML = `<div class="otp-val">${esc(text)}</div><button class="copy" type="button" data-v="${esc(text)}">${T[lang || 'ku'].copy}</button>`;
-    } else {
-      otpRow.innerHTML = `<div class="otp-empty">چاوەڕێی کۆد... (نوێ بکەرەوە)</div>`;
-    }
-  } catch(e) {
-    // ئەگەر کێشەی CORS هەبوو یان سرڤەرەکە ڕاستەوخۆ نەدراوەتەوە، لینکەکە وەک خۆی نیشان دەدات یان تێپەڕ دەبێت
-    otpRow.innerHTML = `<div class="otp-val" style="font-size:0.85rem;direction:ltr;word-break:break-all;"><a href="${esc(url)}" target="_blank" style="color:#34d399">${esc(url)}</a></div>`;
-  }
-}
-
 function render(){
   const t = T[lang || 'ku'];
   updateTexts();
@@ -454,6 +390,7 @@ function render(){
   }
 
   const d = state.data;
+  
   const values = d.data || [];
   
   let emailVal = '';
@@ -462,7 +399,6 @@ function render(){
   let extra3Val = '';
   let extra4Val = '';
 
-  // لێرەدا هەردوو جۆری لینک (دۆمەین و IP) دەپشکنرێت و دەدۆزرێتەوە
   for (let i = 0; i < values.length; i++) {
     const val = values[i];
     if (val === null || String(val).trim() === '') continue;
@@ -576,45 +512,207 @@ function render(){
         <svg style="width:18px;height:18px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636l3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         <span>${t.supOpen}</span>
       </button>
+      <div id="supportOptionsList" class="support-options" style="display:none">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--muted);text-align:center">${t.supTitle}</div>
+        <button type="button" class="support-option-btn" data-sup-opt="1">
+          <span>${t.opt1}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button type="button" class="support-option-btn" data-sup-opt="2">
+          <span>${t.opt2}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button type="button" class="support-option-btn" data-sup-opt="3" id="opt3Btn">
+          <span>${t.opt3}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <div id="supportCustomBox" class="support-custom-box" style="display:none">
+          <textarea id="supportCustomInput" class="support-textarea" placeholder="${t.customPlaceholder}"></textarea>
+          <button type="button" id="supportSendCustomBtn" class="support-send-btn">ناردنی پرسیار</button>
+        </div>
+      </div>
+      <p id="supportMsg" class="support-msg" style="display:none"></p>
     </div>
   `;
+
+  box.querySelectorAll('.copy[data-v]').forEach(b => b.onclick = () => {
+    const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+  });
 }
 
-// سیستەمی کۆپیکردن و گۆڕینی زمان
-document.addEventListener('click', e => {
-  const copyBtn = e.target.closest('.copy');
-  if (copyBtn) {
-    const val = copyBtn.getAttribute('data-v');
-    navigator.clipboard.writeText(val).then(() => {
-      const orig = copyBtn.textContent;
-      copyBtn.textContent = T[lang || 'ku'].copied;
-      copyBtn.classList.add('done');
-      setTimeout(() => {
-        copyBtn.textContent = orig;
-        copyBtn.classList.remove('done');
-      }, 1500);
-    });
+async function fetchOtp(url, isManual = false) {
+  const row = document.getElementById('otpRow');
+  if (!row) return;
+  const t = T[lang || 'ku'];
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    const text = await res.text();
+    let codeVal = '';
+    const m = text.match(/\b\d{4,8}\b/);
+    if (m) {
+      codeVal = m[0];
+    } else {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const bodyText = doc.body ? doc.body.textContent : text;
+      const m2 = bodyText.match(/\b\d{4,8}\b/);
+      if (m2) codeVal = m2[0];
+    }
+
+    if (codeVal) {
+      if (codeVal !== lastDetectedOtp || isManual) {
+        if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '') {
+          playNotificationSound();
+        }
+        lastDetectedOtp = codeVal;
+      }
+
+      row.innerHTML = `
+        <div class="otp-val">${esc(codeVal)}</div>
+        <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
+      `;
+      row.querySelector('.copy').onclick = function() {
+        const b = this;
+        const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+        if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+      };
+    }
+  } catch(e) {}
+}
+
+document.addEventListener('click', async e => {
+  const supportBox = e.target.closest('#supportBox');
+  if (!supportBox) return;
+
+  const toggleBtn = e.target.closest('#supportToggleBtn');
+  const optionsList = document.getElementById('supportOptionsList');
+  if (toggleBtn && optionsList) {
+    optionsList.style.display = optionsList.style.display === 'none' ? 'grid' : 'none';
+    return;
   }
+
+  const opt3Btn = e.target.closest('#opt3Btn');
+  const customBox = document.getElementById('supportCustomBox');
+  if (opt3Btn && customBox) {
+    customBox.style.display = customBox.style.display === 'none' ? 'grid' : 'none';
+    return;
+  }
+
+  const sendCustomBtn = e.target.closest('#supportSendCustomBtn');
+  if (sendCustomBtn) {
+    const input = document.getElementById('supportCustomInput');
+    const customText = input ? input.value.trim() : '';
+    if (!customText) return;
+    submitSupportReport('پرسیار/کێشەی تر: ' + customText);
+    return;
+  }
+
+  const optBtn = e.target.closest('[data-sup-opt]');
+  if (!optBtn || optBtn.disabled) return;
+
+  const optNum = optBtn.getAttribute('data-sup-opt');
+  if (optNum === '3') return;
+
+  let noteText = 'کێشە: ئەم Apple ID کار ناکات';
+  if (optNum === '2') noteText = 'کێشە: پاسۆرد یان ئیمەیڵ هەڵەیە';
+
+  submitSupportReport(noteText);
 });
 
-const langBtn = document.getElementById('langBtn');
-const langMenu = document.getElementById('langMenu');
-if (langBtn && langMenu) {
-  langBtn.onclick = () => {
-    const exp = langBtn.getAttribute('aria-expanded') === 'true';
-    langBtn.setAttribute('aria-expanded', !exp);
-    langMenu.hidden = exp;
-  };
-  langMenu.onclick = e => {
-    const btn = e.target.closest('button[data-lang]');
-    if (btn) {
-      lang = btn.dataset.lang;
-      store.set('dubra_lang', lang);
-      langMenu.hidden = true;
-      langBtn.setAttribute('aria-expanded', 'false');
-      render();
+async function submitSupportReport(noteText) {
+  const optionsList = document.getElementById('supportOptionsList');
+  const msgEl = document.getElementById('supportMsg');
+  
+  if (optionsList) optionsList.style.display = 'none';
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '';
+    msgEl.textContent = T[lang || 'ku'].supWait;
+  }
+
+  try {
+    const r = await fetch(REPORT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+      body: JSON.stringify({ p_code: code, p_note: noteText })
+    }).then(res => res.json());
+
+    if (!r.ok) throw 0;
+    if (msgEl) {
+      msgEl.style.color = 'var(--ok)';
+      msgEl.textContent = r.already ? T[lang || 'ku'].supAlready : T[lang || 'ku'].supDone;
     }
+  } catch(err) {
+    if (msgEl) {
+      msgEl.style.color = 'var(--bad)';
+      msgEl.textContent = T[lang || 'ku'].supErr;
+    }
+  }
+}
+
+const langBtn = document.getElementById('langBtn'), langMenu = document.getElementById('langMenu');
+function toggleMenu(open){ langMenu.hidden = !open; langBtn.setAttribute('aria-expanded', String(open)); }
+langBtn.onclick = e => { e.stopPropagation(); toggleMenu(langMenu.hidden); };
+
+langMenu.querySelectorAll('[data-lang]').forEach(b => {
+  b.onclick = () => {
+    lang = b.dataset.lang; 
+    store.set('dubra_lang', lang); 
+    toggleMenu(false); 
+    render(); 
   };
+});
+
+document.addEventListener('click', () => toggleMenu(false));
+
+function stamp(){
+  const n = new Date(), p = x => String(x).padStart(2, '0');
+  document.getElementById('time').textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' · ' + p(n.getHours()) + ':' + p(n.getMinutes());
+}
+
+function loadData(){
+  if (!code) { state = { kind: 'error', msg: 'invalid' }; render(); return; }
+  
+  const cachedData = store.get('dubra_data_' + code);
+  if (cachedData) {
+    try {
+      const parsed = JSON.parse(cachedData);
+      state = { kind: 'ok', data: parsed };
+      render();
+    } catch(e) {}
+  }
+
+  fetch(SUPABASE_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+    body: JSON.stringify({ p_code: code }),
+    cache: 'no-store'
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.ok) {
+        state = { kind: 'error', msg: d.error === 'empty' ? 'invalid' : 'invalid' };
+      } else {
+        d.code = code;
+        store.set('dubra_data_' + code, JSON.stringify(d));
+        state = { kind: 'ok', data: d };
+        stamp();
+      }
+      render();
+    })
+    .catch(() => {
+      if (!cachedData) {
+        state = { kind: 'error', msg: 'net' };
+        render();
+      }
+    });
+}
+
+history.replaceState(null, '', location.pathname);
+
+if (lang) {
+  loadData();
 }
 </script>
 </body>
