@@ -368,7 +368,7 @@ function updateTexts() {
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
 }
 
-// فەنکشنی نوێ بۆ خوێندنەوەی لینک و دەرهێنانی تەنها 6 ژمارەکە
+// فەنکشنی پێشکەوتوو بۆ خوێندنەوەی هەموو جۆرە لینکێک و دەرهێنانی کۆدی 6 ژمارەیی
 async function fetchAndExtract6Digits(url) {
   const otpRow = document.getElementById('otpRow');
   const t = T[lang || 'ku'];
@@ -376,32 +376,41 @@ async function fetchAndExtract6Digits(url) {
   if (!otpRow) return;
 
   try {
-    // هەوڵ دەدات لینکەکە بخوێنێتەوە (هەندێک جار بەهۆی CORS ڕەنگە داواکارییەکە لەڕێگەی برووسەرەوە فلتەر ببێت، بۆیە Proxy بەکارلێت یان بەپێی پێویست داواکاری ڕاستەوخۆ جێبەجێ دەبێت)
-    const response = await fetch(url);
-    const textData = await response.text();
+    let textData = '';
     
-    // گەڕان بەدوای زنجیرەیەک لە 6 ژمارە لەناو ناوەڕۆکی پەڕەکە یان لینکەکە
-    const match = textData.match(/\b\d{6}\b/) || url.match(/\b\d{6}\b/);
+    // بەکارهێنانی CORS Proxy بۆ ئەو لینکە دەرەکیانەی کە ڕێگری لە داواکاری ڕاستەوخۆ دەکەن (وەک IPکان یان دۆمەینەکان)
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
     
+    try {
+      const res = await fetch(proxyUrl);
+      textData = await res.text();
+    } catch (errProxy) {
+      // ئەگەر پراکسیەکەش نەکرد، هەوڵی ڕاستەوخۆ دەدات
+      const resDirect = await fetch(url);
+      textData = await resDirect.text();
+    }
+
+    // گەڕان بەدوای زنجیرەیەک لە 6 ژمارە لەناو ناوەڕۆکی پەڕەکە (JSON یان HTML) یان خودی لینکەکە
+    let match = textData.match(/\b\d{6}\b/) || url.match(/\b\d{6}\b/);
+    
+    // ئەگەر JSON بوو و بەشێوازی key بوو، هەوڵ دەدات بە شێوازێکی فراوانتر ژمارەی 6 خانەیی بدۆزێتەوە
+    if (!match) {
+      const numbers = textData.match(/\d{6}/g);
+      if (numbers && numbers.length > 0) {
+        match = [numbers[0]];
+      }
+    }
+
     if (match) {
       const code6 = match[0];
       otpRow.innerHTML = `<div class="otp-val">${code6}</div><button class="copy" type="button" data-v="${code6}">${t.copy}</button>`;
       playNotificationSound();
       attachCopyEvents();
     } else {
-      // ئەگەر لە ناوەڕۆکەکە نەدۆزرایەوە، هەوڵ دەدات هەر ژمارەیەکی 6 خانەیی لە خودی URLـەکەش دەربکات
-      const urlMatch = url.match(/\b\d{6}\b/);
-      if (urlMatch) {
-        const code6 = urlMatch[0];
-        otpRow.innerHTML = `<div class="otp-val">${code6}</div><button class="copy" type="button" data-v="${code6}">${t.copy}</button>`;
-        playNotificationSound();
-        attachCopyEvents();
-      } else {
-        otpRow.innerHTML = `<div class="otp-empty">هیچ کۆدێکی 6 ژمارەیی نەدۆزراوەوە، دووبارە هەوڵ بدەرەوە</div>`;
-      }
+      otpRow.innerHTML = `<div class="otp-empty">هیچ کۆدێکی 6 ژمارەیی نەدۆزراوەوە، دووبارە هەوڵ بدەرەوە</div>`;
     }
   } catch (err) {
-    // ئەگەر کێشەی CORS هەبوو یان نەکرا، تەنها لە خودی URLـەکەی لینکی پاشەکەوتکراو پشکنین بۆ 6 ژمارە دەکات
+    // پشکنینی کۆتایی لە خودی URLـەکە خۆیدا
     const fallbackMatch = url.match(/\b\d{6}\b/);
     if (fallbackMatch) {
       const code6 = fallbackMatch[0];
@@ -657,7 +666,7 @@ async function sendSupportReport(activeCode, message) {
       body: JSON.stringify({ qr_code: activeCode, issue: message })
     });
 
-    if (res.ok) {
+    if (res.ok, REPORT_API) {
       if (msgEl) {
         msgEl.style.color = '#34d399';
         msgEl.textContent = t.supDone;
@@ -718,7 +727,6 @@ async function loadData() {
     state = { kind: 'success', data: row };
     render();
 
-    // ئەگەر لینک هه بوو، یەکسەر بەدوای 6 ژمارەکەدا دەگەڕێت و دەیهێنێت
     const values = row.data || [];
     for (let i = 0; i < values.length; i++) {
       const val = values[i];
