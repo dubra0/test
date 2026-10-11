@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#070d1b">
+<title>Company Du Bra - زانیاری کارت</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#070d1b; --card:#0f172a; --line:#1e293b; --ink:#f8fafc; --muted:#94a3b8;
+  --blue:#3b82f6; --blue-dark:#1d4ed8; --blue-glow:rgba(59,130,246,0.35); --blue-light:rgba(59,130,246,0.12);
+  --ok:#10B981; --bad:#EF4444;
+  --f-ku:"Vazirmatn",Tahoma,sans-serif; --f-en:"Outfit","Vazirmatn",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--f-ku);line-height:1.65;overflow-x:hidden;
+  background-image: radial-gradient(circle at 50% 0%, rgba(59,130,246,.15) 0%, transparent 65%);
+  background-attachment:fixed}
+html[lang="en"] body{font-family:var(--f-en)}
+
+.wrap{position:relative;max-width:440px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom));display:grid;gap:16px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand b{font-weight:900;font-size:1.1rem;color:var(--blue)}
+.brand small{display:block;font-family:var(--f-en);font-size:.62rem;letter-spacing:.2em;color:var(--muted);margin-top:-3px;direction:ltr;text-align:start}
+
+.lang{position:relative}
+.lang-btn{display:flex;align-items:center;gap:6px;font:inherit;font-family:var(--f-en);font-weight:700;font-size:.78rem;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:99px;padding:7px 12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.lang-btn svg{width:16px;height:16px;color:var(--blue)}
+.lang-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:150px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.5);padding:6px;display:grid;gap:2px;z-index:10}
+.lang-menu button{font:inherit;font-size:.9rem;text-align:start;background:none;border:0;color:var(--ink);padding:10px 12px;border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;gap:12px}
+.lang-menu button:hover{background:var(--blue-light);color:var(--blue)}
+.lang-menu button[aria-checked="true"]{color:var(--blue);font-weight:800}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+.hero{position:relative;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px 18px 18px;box-shadow:0 10px 30px rgba(0,0,0,.5);text-align:center;display:grid;justify-items:center;gap:10px}
+
+/* گەورەکردن و جوانی لۆگۆ بە ڕەنگی شینی LED */
+.logo-box{width:130px;height:130px;border-radius:50%;background:#070d1b;border:2.5px solid var(--blue);display:grid;place-items:center;box-shadow:0 0 30px var(--blue-glow), inset 0 0 15px rgba(59,130,246,0.3);margin-bottom:2px;overflow:hidden;position:relative;animation:pulseLogo 2s infinite}
+
+@keyframes pulseLogo{
+  0%{box-shadow:0 0 20px rgba(59,130,246,0.3), inset 0 0 10px rgba(59,130,246,0.2)}
+  50%{box-shadow:0 0 35px rgba(59,130,246,0.6), inset 0 0 20px rgba(59,130,246,0.4)}
+  100%{box-shadow:0 0 20px rgba(59,130,246,0.3), inset 0 0 10px rgba(59,130,246,0.2)}
+}
+
+.hero h1{margin:0;font-family:var(--f-en);font-size:1.4rem;font-weight:900;letter-spacing:.05em;color:var(--blue);line-height:1.2}
+.hero .sub-title{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.1em;margin-top:-4px}
+.hero .apple-id-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-en);font-weight:700;font-size:.75rem;color:var(--blue);background:var(--blue-light);border:1px solid rgba(59,130,246,0.3);padding:4px 14px;border-radius:99px;margin-top:2px}
+
+.hero-foot{width:100%;margin-top:4px;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:center;align-items:center}
+.stamp{font-family:var(--f-en);font-size:.7rem;color:var(--muted)}
+
+.lang-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:1000;display:grid;place-items:center;padding:20px;animation:fadeIn .2s ease}
+.lang-select-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px 20px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.7);display:grid;gap:16px;animation:scaleUp .2s ease}
+.lang-select-title{font-weight:900;font-size:1.1rem;color:var(--blue);margin:0}
+.lang-options{display:grid;gap:10px}
+.lang-option-btn{background:var(--bg);border:1px solid var(--line);color:var(--ink);padding:12px;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer;transition:all .2s}
+.lang-option-btn:hover{background:var(--blue-light);border-color:var(--blue);color:var(--blue)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:999;display:grid;place-items:center;padding:20px;animation:fadeIn .2s ease}
+.modal-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px 20px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.7);display:grid;gap:14px;animation:scaleUp .2s ease}
+.modal-logo{width:80px;height:80px;border-radius:50%;background:#070d1b;border:2px solid var(--blue);display:grid;place-items:center;margin:0 auto;box-shadow:0 0 20px var(--blue-glow);overflow:hidden}
+.modal-title{color:var(--bad);font-weight:900;font-size:1.05rem;display:flex;align-items:center;justify-content:center;gap:6px;margin:0}
+.modal-text{font-size:.85rem;color:var(--ink);line-height:1.6;text-align:right}
+html[dir="ltr"] .modal-text{text-align:left}
+.modal-btn{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border:0;padding:12px;border-radius:12px;font-weight:900;font-size:.92rem;cursor:pointer;box-shadow:0 6px 16px var(--blue-glow)}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleUp{from{transform:scale(0.94);opacity:0}to{transform:scale(1);opacity:1}}
+
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:14px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:.9rem;color:var(--blue)}
+.sheet-h span{font-family:var(--f-en);font-size:.68rem;font-weight:600;letter-spacing:.12em;color:var(--muted)}
+
+.credentials-container{display:grid;gap:12px}
+.credential-card{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:inset 0 1px 3px rgba(0,0,0,.5);transition:border-color .2s}
+.credential-card:hover{border-color:rgba(59,130,246,0.4)}
+.credential-info{display:grid;min-width:0;width:100%}
+.credential-label{font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:2px}
+.credential-value{margin:0;font-family:var(--f-en);font-size:1.05rem;font-weight:800;color:var(--ink);direction:ltr;text-align:start;overflow-wrap:anywhere}
+
+.copy{font:inherit;font-size:.74rem;font-weight:800;border:1px solid rgba(59,130,246,0.3);color:var(--blue);background:var(--blue-light);border-radius:10px;padding:8px 14px;cursor:pointer;transition:all .2s;flex:none}
+.copy:hover{background:var(--blue);color:#fff}
+.copy.done{background:var(--ok);color:#fff;border-color:var(--ok)}
+
+.otp-box{background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:16px;display:grid;gap:10px;box-shadow:0 4px 15px rgba(0,0,0,.2)}
+.otp-header{display:flex;align-items:center;justify-content:space-between}
+.otp-title{font-size:.78rem;font-weight:800;color:#34d399;display:flex;align-items:center;gap:6px}
+.otp-actions{display:flex;align-items:center;gap:8px}
+
+.update-btn{font:inherit;font-size:.72rem;font-weight:700;border:1px solid rgba(16,185,129,0.4);color:#34d399;background:rgba(16,185,129,0.1);border-radius:9px;padding:6px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.update-btn:hover{background:#10b981;color:#fff}
+.update-btn svg{width:13px;height:13px;transition:transform .4s}
+.update-btn.spinning svg{transform:rotate(360deg)}
+
+.otp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:10px 14px}
+.otp-val{font-family:var(--f-en);font-size:1.2rem;font-weight:900;color:#34d399;letter-spacing:.1em;direction:ltr}
+.otp-empty{font-size:.82rem;color:var(--muted);font-weight:700;text-align:center;padding:6px;width:100%}
+
+.extra-box{background:var(--blue-light);border:1px solid rgba(59,130,246,0.25);border-radius:16px;padding:16px;display:grid;gap:10px;box-shadow:0 4px 15px rgba(0,0,0,.2)}
+.extra-title{font-size:.75rem;font-weight:800;color:var(--blue);letter-spacing:.05em}
+.extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.extra-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.extra-label{font-size:.65rem;font-weight:700;color:var(--muted)}
+.extra-val{font-family:var(--f-en);font-size:.95rem;font-weight:800;color:var(--ink);direction:ltr;text-align:start;overflow-wrap:anywhere}
+
+.support-section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.support-btn-main{width:100%;padding:14px;border-radius:16px;border:1px solid rgba(59,130,246,0.4);background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37,99,235,0.25));color:var(--blue);font:inherit;font-weight:800;cursor:pointer;font-size:0.95rem;box-shadow:0 6px 16px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.support-btn-main:hover{background:var(--blue);color:#fff}
+.support-options{display:grid;gap:8px;animation:fadeIn .2s ease}
+.support-option-btn{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-weight:700;font-size:0.88rem;cursor:pointer;text-align:start;display:flex;align-items:center;justify-content:space-between;transition:all .2s}
+.support-option-btn:hover{background:var(--blue-light);border-color:var(--blue);color:var(--blue)}
+.support-option-btn svg{width:16px;height:16px;color:var(--muted);flex:none}
+.support-option-btn:hover svg{color:var(--blue)}
+.support-msg{margin:0;text-align:center;font-weight:700;font-size:0.85rem}
+.support-custom-box{display:grid;gap:8px;margin-top:6px}
+.support-textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:10px 12px;font:inherit;font-size:0.85rem;resize:vertical;min-height:75px}
+.support-textarea:focus{border-color:var(--blue);outline:none}
+.support-send-btn{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:10px;font:inherit;font-weight:800;font-size:0.85rem;cursor:pointer;transition:background .2s}
+.support-send-btn:hover{background:var(--blue-dark)}
+
+.foot{text-align:center;font-size:.75rem;color:var(--muted);display:grid;gap:2px;margin-top:4px}
+.foot b{color:var(--blue)}
+.err{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.3);font-weight:700;padding:14px;border-radius:12px;text-align:center;font-size:.9rem}
+</style>
+</head>
+<body>
+
+  <!-- Modal بۆ هەڵبژاردنی زمان لە سەرەتادا -->
+  <div class="lang-modal-overlay" id="langSelectModal">
+    <div class="lang-select-card">
+      <div class="logo-box" style="margin:0 auto">
+        <svg viewBox="0 0 500 500" width="100%" height="100%">
+          <circle cx="250" cy="250" r="240" fill="#070d1b" stroke="#3b82f6" stroke-width="12"/>
+          <circle cx="250" cy="250" r="210" fill="none" stroke="#3b82f6" stroke-width="4"/>
+          <defs>
+            <path id="topTextPath1" d="M 80,250 A 170,170 0 1,1 420,250" />
+            <path id="bottomTextPath1" d="M 410,250 A 160,160 0 0,1 90,250" />
+          </defs>
+          <text fill="#3b82f6" font-family="Arial, sans-serif" font-weight="bold" font-size="28" letter-spacing="3">
+            <textPath href="#topTextPath1" startOffset="50%" text-anchor="middle">COMPANY DU BRA</textPath>
+          </text>
+          <text fill="#3b82f6" font-family="Arial, sans-serif" font-weight="bold" font-size="26" letter-spacing="2.5">
+            <textPath href="#bottomTextPath1" startOffset="50%" text-anchor="middle">IRAQ KURDISTAN</textPath>
+          </text>
+          <!-- لۆگۆی ئەپڵ (Apple Logo) -->
+          <g fill="#3b82f6" transform="translate(195, 130) scale(0.55)">
+            <path d="M117.678,102.053 c-2.037,-16.906 11.458,-25.26 12.016,-25.618 c-6.55,-9.578 -16.745,-10.876 -20.316,-11.168 c-8.65,-0.902 -16.924,5.088 -21.309,5.088 c-4.404,0 -11.237,-4.96 -18.455,-4.832 c-9.489,0.178 -18.232,5.516 -23.102,14.004 c-9.873,17.135 -2.529,42.455 7.021,56.328 c4.814,6.974 10.556,14.777 18.093,14.492 c7.284,-0.292 10.038,-4.707 18.847,-4.707 c8.775,0 11.432,4.707 19.204,4.553 c7.872,-0.254 13.01,-7.433 17.794,-14.429 c5.636,-8.188 7.954,-16.108 8.083,-16.517 C118.411,103.58 117.678,102.053 117.678,102.053 Z"/>
+            <path d="M102.404,36.568 c4.116,-4.996 6.879,-11.944 6.126,-18.868 c-5.922,0.241 -13.084,3.948 -17.332,8.944 c-3.805,4.444 -7.139,11.536 -6.079,18.368 C91.076,45.344 98.118,41.42 102.404,36.568 Z"/>
+          </g>
+          <!-- دەقی DB (ڕەمزی دوو برا) لە ناوەڕاستدا -->
+          <text x="250" y="325" fill="#3b82f6" font-family="Arial, sans-serif" font-weight="900" font-size="70" text-anchor="middle" letter-spacing="3" filter="drop-shadow(0 0 8px rgba(59,130,246,0.6))">DB</text>
+        </svg>
+      </div>
+      <h3 class="lang-select-title">تکایە زمانێک هەڵبژێرە<br><span style="font-size:0.8rem;color:var(--muted);font-weight:500">Please select your language</span></h3>
+      <div class="lang-options">
+        <button class="lang-option-btn" type="button" onclick="selectInitialLang('ku')">کوردی (Kurdish)</button>
+        <button class="lang-option-btn" type="button" onclick="selectInitialLang('ar')">العربية (Arabic)</button>
+        <button class="lang-option-btn" type="button" onclick="selectInitialLang('en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal هۆشداری Apple ID -->
+  <div class="modal-overlay" id="warningModal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-logo">
+        <svg viewBox="0 0 500 500" width="100%" height="100%">
+          <circle cx="250" cy="250" r="240" fill="#070d1b" stroke="#3b82f6" stroke-width="12"/>
+          <circle cx="250" cy="250" r="210" fill="none" stroke="#3b82f6" stroke-width="4"/>
+          <defs>
+            <path id="topTextPath2" d="M 80,250 A 170,170 0 1,1 420,250" />
+            <path id="bottomTextPath2" d="M 410,250 A 160,160 0 0,1 90,250" />
+          </defs>
+          <text fill="#3b82f6" font-family="Arial, sans-serif" font-weight="bold" font-size="28" letter-spacing="3">
+            <textPath href="#topTextPath2" startOffset="50%" text-anchor="middle">COMPANY DU BRA</textPath>
+          </text>
+          <text fill="#3b82f6" font-family="Arial, sans-serif" font-weight="bold" font-size="26" letter-spacing="2.5">
+            <textPath href="#bottomTextPath2" startOffset="50%" text-anchor="middle">IRAQ KURDISTAN</textPath>
+          </text>
+          <g fill="#3b82f6" transform="translate(195, 130) scale(0.55)">
+            <path d="M117.678,102.053 c-2.037,-16.906 11.458,-25.26 12.016,-25.618 c-6.55,-9.578 -16.745,-10.876 -20.316,-11.168 c-8.65,-0.902 -16.924,5.088 -21.309,5.088 c-4.404,0 -11.237,-4.96 -18.455,-4.832 c-9.489,0.178 -18.232,5.516 -23.102,14.004 c-9.873,17.135 -2.529,42.455 7.021,56.328 c4.814,6.974 10.556,14.777 18.093,14.492 c7.284,-0.292 10.038,-4.707 18.847,-4.707 c8.775,0 11.432,4.707 19.204,4.553 c7.872,-0.254 13.01,-7.433 17.794,-14.429 c5.636,-8.188 7.954,-16.108 8.083,-16.517 C118.411,103.58 117.678,102.053 117.678,102.053 Z"/>
+            <path d="M102.404,36.568 c4.116,-4.996 6.879,-11.944 6.126,-18.868 c-5.922,0.241 -13.084,3.948 -17.332,8.944 c-3.805,4.444 -7.139,11.536 -6.079,18.368 C91.076,45.344 98.118,41.42 102.404,36.568 Z"/>
+          </g>
+          <text x="250" y="325" fill="#3b82f6" font-family="Arial, sans-serif" font-weight="900" font-size="70" text-anchor="middle" letter-spacing="3" filter="drop-shadow(0 0 8px rgba(59,130,246,0.6))">DB</text>
+        </svg>
+      </div>
+      <h3 class="modal-title" id="modalTitleText">⚠️ ئاگادارییەکی گرنگ</h3>
+      <div class="modal-text" id="modalDescText">
+        تکایە بەهیچ شێوەیەک ئەم Apple ID له Settings ی موبایلەکەت داخل مەکە! تەنها لە App Store داخل بکە.<br><br>
+        کاتی داخلکردنی، تکایە ڕاستەوخۆ بیخەرە سەر ژمارەی موبایلی خۆت.
+      </div>
+      <button class="modal-btn" id="closeModalBtn" type="button">تێگەیشتم، پیشاندانی زانیارییەکان</button>
+    </div>
+  </div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div><b>Company Du Bra</b><small>DB STORE</small></div>
+    </div>
+    <div class="lang">
+      <button class="lang-btn" id="langBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/></svg>
+        <span id="langCode">KU</span>
+      </button>
+      <div class="lang-menu" id="langMenu" role="menu" hidden>
+        <button type="button" role="menuitemradio" data-lang="ku">کوردی</button>
+        <button type="button" role="menuitemradio" data-lang="ar">العربية</button>
+        <button type="button" role="menuitemradio" data-lang="en">English</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="logo-box">
+      <svg viewBox="0 0 500 500" width="100%" height="100%">
+        <circle cx="250" cy="250" r="240" fill="#070d1b" stroke="#3b82f6" stroke-width="12"/>
+        <circle cx="250" cy="250" r="210" fill="none" stroke="#3b82f6" stroke-width="4"/>
+        <defs>
+          <path id="topTextPath3" d="M 80,250 A 170,170 0 1,1 420,250" />
+          <path id="bottomTextPath3" d="M 410,250 A 160,160 0 0,1 90,250" />
+        </defs>
+        <text fill="#3b82f6" font-family="Arial, sans-serif" font-weight="bold" font-size="28" letter-spacing="3">
+          <textPath href="#topTextPath3" startOffset="50%" text-anchor="middle">COMPANY DU BRA</textPath>
+        </text>
+        <text fill="#3b82f6" font-family="Arial, sans-serif" font-weight="bold" font-size="26" letter-spacing="2.5">
+          <textPath href="#bottomTextPath3" startOffset="50%" text-anchor="middle">IRAQ KURDISTAN</textPath>
+        </text>
+        <!-- لۆگۆی ئەپڵ (Apple Logo) -->
+        <g fill="#3b82f6" transform="translate(195, 130) scale(0.55)">
+          <path d="M117.678,102.053 c-2.037,-16.906 11.458,-25.26 12.016,-25.618 c-6.55,-9.578 -16.745,-10.876 -20.316,-11.168 c-8.65,-0.902 -16.924,5.088 -21.309,5.088 c-4.404,0 -11.237,-4.96 -18.455,-4.832 c-9.489,0.178 -18.232,5.516 -23.102,14.004 c-9.873,17.135 -2.529,42.455 7.021,56.328 c4.814,6.974 10.556,14.777 18.093,14.492 c7.284,-0.292 10.038,-4.707 18.847,-4.707 c8.775,0 11.432,4.707 19.204,4.553 c7.872,-0.254 13.01,-7.433 17.794,-14.429 c5.636,-8.188 7.954,-16.108 8.083,-16.517 C118.411,103.58 117.678,102.053 117.678,102.053 Z"/>
+          <path d="M102.404,36.568 c4.116,-4.996 6.879,-11.944 6.126,-18.868 c-5.922,0.241 -13.084,3.948 -17.332,8.944 c-3.805,4.444 -7.139,11.536 -6.079,18.368 C91.076,45.344 98.118,41.42 102.404,36.568 Z"/>
+        </g>
+        <!-- دەقی DB (ڕەمزی دوو برا) لە ناوەڕاستدا -->
+        <text x="250" y="325" fill="#3b82f6" font-family="Arial, sans-serif" font-weight="900" font-size="70" text-anchor="middle" letter-spacing="3" filter="drop-shadow(0 0 8px rgba(59,130,246,0.6))">DB</text>
+      </svg>
+    </div>
+    <h1>Company Du Bra</h1>
+    <div class="sub-title">IRAQ KURDISTAN</div>
+    <div class="apple-id-tag">Apple ID Store</div>
+    <div class="hero-foot">
+      <span class="stamp" id="time"></span>
+    </div>
+  </section>
+
+  <section class="sheet">
+    <div class="sheet-h"><b data-t="title">زانیاری کارت</b><span>CARD INFO</span></div>
+    <div id="box"></div>
+  </section>
+
+  <div id="supportContainer"></div>
+
+  <footer class="foot">
+    <span>© <b>Company Du Bra · دوو برا</b></span>
+    <span data-t="thanks">سوپاس بۆ متمانەکەت</span>
+  </footer>
+</div>
+
+<script>
+const SUPABASE_API = 'https://foplvmfppbngywmxmqof.supabase.co/rest/v1/rpc/scan';
+const REPORT_API = 'https://foplvmfppbngywmxmqof.supabase.co/rest/v1/rpc/report_qr';
+const KEY = 'sb_publishable_HFxscwwTWxXEspJEnpJgFA_Ib4A5cAQ';
+
+const T = {
+  ku: { dir:'rtl', code:'KU', title:'زانیاری کارت', checking:'پشکنین…',
+        email:'Email', password:'Password', otpTitle:'کۆدی دڵنیایی (OTP)', otpWait:'بۆ بینینی کۆد، دوگمەی نوێکردنەوە دابگرە...', copy:'کۆپی کردن', copied:'کۆپی کرا ✓',
+        updateBtn:'نوێکردنەوە', invalid:'ئەم QR کۆدە دروست نییە یاخود بەردەست نییە', net:'پەیوەندی نەکرا. ئینتەرنێت بپشکنە.', error:'هەڵە', thanks:'سوپاس بۆ متمانەکەت', modalBtn:'تێگەیشتم، پیشاندانی زانیارییەکان',
+        warningTitle:'⚠️ ئاگادارییەکی گرنگ', warningText:'تکایە بەهیچ شێوەیەک ئەم Apple ID له Settings ی موبایلەکەت داخل مەکە! تەنها لە App Store داخل بکە.<br><br>کاتی داخلکردنی، تکایە ڕاستەوخۆ بیخەرە سەر ژمارەی موبایلی خۆت.',
+        supOpen:'پەیوەندی بە سەپۆرت (Support)', supTitle:'تکایە کێشەکەت دیاری بکە:',
+        opt1:'ئەم Apple ID کار ناکات', opt2:'پاسۆرد یان ئیمەیڵ هەڵەیە', opt3:'پرسیارێکی تری هەیە / کێشەی تر',
+        supWait:'چاوەڕێ بکە...', supDone:'✅ داواکارییەکەت نێردرا بۆ سەپۆرت. بە زوویی چارەسەر دەکرێت.', supAlready:'داواکارییەکەت پێشتر نێردراوە.', supErr:'نەنێردرا، دووبارە هەوڵ بدەرەوە.',
+        customPlaceholder:'پرسیار یان کێشەکەت لێرە بنووسە...' },
+  ar: { dir:'rtl', code:'AR', title:'معلومات البطاقة', checking:'جارٍ التحقق…',
+        email:'Email', password:'Password', otpTitle:'رمز التحقق (OTP)', otpWait:'لإظهار الرمز، اضغط على زر التحديث...', copy:'نسخ', copied:'تم النسخ ✓',
+        updateBtn:'تحديث', invalid:'رمز QR هذا غير صالح أو غير موجود', net:'تعذّر الاتصال. تحقّق من الإنترنت.', error:'خطأ', thanks:'شكراً لثقَتِك', modalBtn:'فهمت، عرض المعلومات',
+        warningTitle:'⚠️ تنبيه مهم', warningText:'يرجى عدم إدخال Apple ID هذا في إعدادات الهاتف (Settings) نهائياً! قم بإدخاله في App Store فقط.<br><br>عند الإدخال، يرجى وضعه مباشرة على رقم هاتفك.',
+        supOpen:'الاتصال بالدعم (Support)', supTitle:'يرجى تحديد مشكلتك:',
+        opt1:'هذا Apple ID لا يعمل', opt2:'كلمة المرور أو البريد خطأ', opt3:'دي سؤال آخر / مشكلة أخرى',
+        supWait:'جاري الانتظار...', supDone:'✅ تم إرسال طلبك إلى الدعم. سيتم الحل قريباً.', supAlready:'تم إرسال طلبك مسبقاً.', supErr:'فشل الإرسال، حاول مجدداً.',
+        customPlaceholder:'اكتب سؤالك أو مشكلتك هنا...' },
+  en: { dir:'ltr', code:'EN', title:'Card details', checking:'Verifying…',
+        email:'Email', password:'Password', otpTitle:'Verification Code (OTP)', otpWait:'To see the code, click the update button...', copy:'Copy', copied:'Copied ✓',
+        updateBtn:'Refresh', invalid:'This QR code is not valid or available', net:'Couldn’t connect. Check your internet.', error:'Error', thanks:'Thank you for your trust', modalBtn:'Got it, show details',
+        warningTitle:'⚠ Important Warning', warningText:'Please do NOT sign in with this Apple ID in your phone Settings! Sign in via App Store only.<br><br>When signing in, please use your own mobile phone number directly.',
+        supOpen:'Contact Support', supTitle:'Please select your issue:',
+        opt1:'This Apple ID does not work', opt2:'Password or Email is incorrect', opt3:'I have another question / issue',
+        supWait:'Please wait...', supDone:'✅ Request sent to support. It will be resolved soon.', supAlready:'Your request was already submitted.', supErr:'Failed to send, try again.',
+        customPlaceholder:'Write your question or issue here...' }
+};
+
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
+
+let lang = store.get('dubra_lang') || null;
+let state = { kind: 'loading' };
+let lastDetectedOtp = '';
+
+function playNotificationSound() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+const urlParams = new URLSearchParams(location.search);
+let code = (urlParams.get('c') || '').trim().toUpperCase();
+
+if (code) {
+  store.set('dubra_active_code', code);
+} else {
+  code = store.get('dubra_active_code') || '';
+}
+
+const box = document.getElementById('box');
+const supportContainer = document.getElementById('supportContainer');
+const langSelectModal = document.getElementById('langSelectModal');
+const warningModal = document.getElementById('warningModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+
+function selectInitialLang(selectedLang) {
+  lang = selectedLang;
+  store.set('dubra_lang', lang);
+  langSelectModal.style.display = 'none';
+  updateTexts();
+  warningModal.style.display = 'grid';
+}
+
+if (lang) {
+  langSelectModal.style.display = 'none';
+  warningModal.style.display = 'grid';
+  updateTexts();
+}
+
+closeModalBtn.onclick = () => {
+  warningModal.style.display = 'none';
+  loadData();
+};
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = v => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v)) ? v.slice(0, 10) : v;
+
+function updateTexts() {
+  const t = T[lang || 'ku'];
+  document.documentElement.lang = lang === 'ku' ? 'ckb' : (lang || 'ku');
+  document.documentElement.dir = t.dir;
+  document.getElementById('langCode').textContent = t.code;
+  closeModalBtn.textContent = t.modalBtn;
+  document.getElementById('modalTitleText').textContent = t.warningTitle;
+  document.getElementById('modalDescText').innerHTML = t.warningText;
+  document.querySelectorAll('[data-t]').forEach(el => el.textContent = t[el.dataset.t]);
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
+}
+
+function render(){
+  const t = T[lang || 'ku'];
+  updateTexts();
+
+  if (state.kind === 'loading') {
+    box.innerHTML = '<div style="height:90px;background:var(--bg);border-radius:12px"></div>';
+    supportContainer.innerHTML = '';
+    return;
+  }
+  if (state.kind === 'error') {
+    box.innerHTML = '<div class="err">' + t[state.msg] + '</div>';
+    supportContainer.innerHTML = '';
+    return;
+  }
+
+  const d = state.data;
+  
+  const values = d.data || [];
+  
+  let emailVal = '';
+  let passVal = '';
+  let otpLink = '';
+  let extra3Val = '';
+  let extra4Val = '';
+
+  for (let i = 0; i < values.length; i++) {
+    const val = values[i];
+    if (val === null || String(val).trim() === '') continue;
+    const strVal = String(val).trim();
+    
+    if (strVal.startsWith('http://') || strVal.startsWith('https://')) {
+      otpLink = strVal;
+      continue;
+    }
+
+    if (!emailVal) emailVal = strVal;
+    else if (!passVal) passVal = strVal;
+    else if (!extra3Val) extra3Val = strVal;
+    else if (!extra4Val) extra4Val = strVal;
+  }
+
+  let html = '<div class="credentials-container">';
+  
+  if (emailVal) {
+    html += `
+      <div class="credential-card">
+        <div class="credential-info">
+          <div class="credential-label">${t.email}</div>
+          <div class="credential-value">${esc(fmt(emailVal))}</div>
+        </div>
+        <button class="copy" type="button" data-v="${esc(fmt(emailVal))}">${t.copy}</button>
+      </div>
+    `;
+  }
+
+  if (passVal) {
+    html += `
+      <div class="credential-card">
+        <div class="credential-info">
+          <div class="credential-label">${t.password}</div>
+          <div class="credential-value">${esc(fmt(passVal))}</div>
+        </div>
+        <button class="copy" type="button" data-v="${esc(fmt(passVal))}">${t.copy}</button>
+      </div>
+    `;
+  }
+
+  html += '</div>';
+
+  if (otpLink) {
+    html += `
+      <div class="otp-box" data-otp-url="${esc(otpLink)}">
+        <div class="otp-header">
+          <div class="otp-title">
+            <svg style="width:16px;height:16px" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4v-3.586l6.414-6.414A6 6 0 0121 9z"/></svg>
+            <span>${t.otpTitle}</span>
+          </div>
+          <div class="otp-actions">
+            <button class="update-btn" id="updateOtpBtn" type="button" title="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>${t.updateBtn}</span>
+            </button>
+          </div>
+        </div>
+        <div class="otp-row" id="otpRow">
+          <div class="otp-empty">${t.otpWait}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (extra3Val || extra4Val) {
+    html += `
+      <div class="extra-box">
+        <div class="extra-title">زانیاری زیاتری کارت (Extra Info)</div>
+        <div class="extra-grid">
+    `;
+    if (extra3Val) {
+      html += `
+          <div class="extra-item">
+            <div class="extra-label">Info 3</div>
+            <div class="extra-val">${esc(fmt(extra3Val))}</div>
+          </div>
+      `;
+    }
+    if (extra4Val) {
+      html += `
+          <div class="extra-item">
+            <div class="extra-label">Info 4</div>
+            <div class="extra-val">${esc(fmt(extra4Val))}</div>
+          </div>
+      `;
+    }
+    html += `
+        </div>
+      </div>
+    `;
+  }
+
+  box.innerHTML = html;
+
+  if (otpLink) {
+    const updateBtnEl = document.getElementById('updateOtpBtn');
+    if (updateBtnEl) {
+      updateBtnEl.onclick = () => {
+        updateBtnEl.classList.add('spinning');
+        fetchOtp(otpLink, true);
+        setTimeout(() => updateBtnEl.classList.remove('spinning'), 600);
+      };
+    }
+  }
+
+  supportContainer.innerHTML = `
+    <div class="support-section" id="supportBox">
+      <button type="button" id="supportToggleBtn" class="support-btn-main">
+        <svg style="width:18px;height:18px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636l3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span>${t.supOpen}</span>
+      </button>
+      <div id="supportOptionsList" class="support-options" style="display:none">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--muted);text-align:center">${t.supTitle}</div>
+        <button type="button" class="support-option-btn" data-sup-opt="1">
+          <span>${t.opt1}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button type="button" class="support-option-btn" data-sup-opt="2">
+          <span>${t.opt2}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button type="button" class="support-option-btn" data-sup-opt="3" id="opt3Btn">
+          <span>${t.opt3}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <div id="supportCustomBox" class="support-custom-box" style="display:none">
+          <textarea id="supportCustomInput" class="support-textarea" placeholder="${t.customPlaceholder}"></textarea>
+          <button type="button" id="supportSendCustomBtn" class="support-send-btn">ناردنی پرسیار</button>
+        </div>
+      </div>
+      <p id="supportMsg" class="support-msg" style="display:none"></p>
+    </div>
+  `;
+
+  box.querySelectorAll('.copy[data-v]').forEach(b => b.onclick = () => {
+    const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+  });
+}
+
+async function fetchOtp(url, isManual = false) {
+  const row = document.getElementById('otpRow');
+  if (!row) return;
+  const t = T[lang || 'ku'];
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    const text = await res.text();
+    let codeVal = '';
+    const m = text.match(/\b\d{4,8}\b/);
+    if (m) {
+      codeVal = m[0];
+    } else {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const bodyText = doc.body ? doc.body.textContent : text;
+      const m2 = bodyText.match(/\b\d{4,8}\b/);
+      if (m2) codeVal = m2[0];
+    }
+
+    if (codeVal) {
+      if (codeVal !== lastDetectedOtp || isManual) {
+        if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '') {
+          playNotificationSound();
+        }
+        lastDetectedOtp = codeVal;
+      }
+
+      row.innerHTML = `
+        <div class="otp-val">${esc(codeVal)}</div>
+        <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
+      `;
+      row.querySelector('.copy').onclick = function() {
+        const b = this;
+        const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+        if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+      };
+    }
+  } catch(e) {}
+}
+
+document.addEventListener('click', async e => {
+  const supportBox = e.target.closest('#supportBox');
+  if (!supportBox) return;
+
+  const toggleBtn = e.target.closest('#supportToggleBtn');
+  const optionsList = document.getElementById('supportOptionsList');
+  if (toggleBtn && optionsList) {
+    optionsList.style.display = optionsList.style.display === 'none' ? 'grid' : 'none';
+    return;
+  }
+
+  const opt3Btn = e.target.closest('#opt3Btn');
+  const customBox = document.getElementById('supportCustomBox');
+  if (opt3Btn && customBox) {
+    customBox.style.display = customBox.style.display === 'none' ? 'grid' : 'none';
+    return;
+  }
+
+  const sendCustomBtn = e.target.closest('#supportSendCustomBtn');
+  if (sendCustomBtn) {
+    const input = document.getElementById('supportCustomInput');
+    const customText = input ? input.value.trim() : '';
+    if (!customText) return;
+    submitSupportReport('پرسیار/کێشەی تر: ' + customText);
+    return;
+  }
+
+  const optBtn = e.target.closest('[data-sup-opt]');
+  if (!optBtn || optBtn.disabled) return;
+
+  const optNum = optBtn.getAttribute('data-sup-opt');
+  if (optNum === '3') return;
+
+  let noteText = 'کێشە: ئەم Apple ID کار ناکات';
+  if (optNum === '2') noteText = 'کێشە: پاسۆرد یان ئیمەیڵ هەڵەیە';
+
+  submitSupportReport(noteText);
+});
+
+async function submitSupportReport(noteText) {
+  const optionsList = document.getElementById('supportOptionsList');
+  const msgEl = document.getElementById('supportMsg');
+  
+  if (optionsList) optionsList.style.display = 'none';
+  if (msgEl) {
+    msgEl.style.display = 'block';
+    msgEl.style.color = '';
+    msgEl.textContent = T[lang || 'ku'].supWait;
+  }
+
+  try {
+    const r = await fetch(REPORT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+      body: JSON.stringify({ p_code: code, p_note: noteText })
+    }).then(res => res.json());
+
+    if (!r.ok) throw 0;
+    if (msgEl) {
+      msgEl.style.color = 'var(--ok)';
+      msgEl.textContent = r.already ? T[lang || 'ku'].supAlready : T[lang || 'ku'].supDone;
+    }
+  } catch(err) {
+    if (msgEl) {
+      msgEl.style.color = 'var(--bad)';
+      msgEl.textContent = T[lang || 'ku'].supErr;
+    }
+  }
+}
+
+const langBtn = document.getElementById('langBtn'), langMenu = document.getElementById('langMenu');
+function toggleMenu(open){ langMenu.hidden = !open; langBtn.setAttribute('aria-expanded', String(open)); }
+langBtn.onclick = e => { e.stopPropagation(); toggleMenu(langMenu.hidden); };
+
+langMenu.querySelectorAll('[data-lang]').forEach(b => {
+  b.onclick = () => {
+    lang = b.dataset.lang; 
+    store.set('dubra_lang', lang); 
+    toggleMenu(false); 
+    render(); 
+  };
+});
+
+document.addEventListener('click', () => toggleMenu(false));
+
+function stamp(){
+  const n = new Date(), p = x => String(x).padStart(2, '0');
+  document.getElementById('time').textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' · ' + p(n.getHours()) + ':' + p(n.getMinutes());
+}
+
+function loadData(){
+  if (!code) { state = { kind: 'error', msg: 'invalid' }; render(); return; }
+  
+  const cachedData = store.get('dubra_data_' + code);
+  if (cachedData) {
+    try {
+      const parsed = JSON.parse(cachedData);
+      state = { kind: 'ok', data: parsed };
+      render();
+    } catch(e) {}
+  }
+
+  fetch(SUPABASE_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+    body: JSON.stringify({ p_code: code }),
+    cache: 'no-store'
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.ok) {
+        state = { kind: 'error', msg: d.error === 'empty' ? 'invalid' : 'invalid' };
+      } else {
+        d.code = code;
+        store.set('dubra_data_' + code, JSON.stringify(d));
+        state = { kind: 'ok', data: d };
+        stamp();
+      }
+      render();
+    })
+    .catch(() => {
+      if (!cachedData) {
+        state = { kind: 'error', msg: 'net' };
+        render();
+      }
+    });
+}
+
+history.replaceState(null, '', location.pathname);
+
+if (lang) {
+  loadData();
+}
+</script>
+</body>
+</html>
