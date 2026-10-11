@@ -536,18 +536,30 @@ function render(){
   });
 }
 
-// فەنکشنی خێرا بۆ هێنانی کۆد بەبێ کاش و بە پەیوەندی ڕاستەوخۆ بە پرۆکسی
+// فەنکشنی زۆر خێرا بۆ هێنانی کۆد بە بەکارهێنانی دوو پرۆکسی جیاواز بۆ دڵنیابوون لە کارکردنی بێ کێشە
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
   const t = T[lang || 'ku'];
+
+  const noCacheUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+  const proxyUrls = [
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(noCacheUrl),
+    'https://corsproxy.io/?' + encodeURIComponent(noCacheUrl)
+  ];
+
+  let text = '';
+  for (let i = 0; i < proxyUrls.length; i++) {
+    try {
+      const res = await fetch(proxyUrls[i], { cache: 'no-store' });
+      if (res.ok) {
+        text = await res.text();
+        if (text) break;
+      }
+    } catch(err) {}
+  }
+
   try {
-    // زیادکردنی ڕێکەوتی هەڕەمەکی بۆ کۆتایی بەستەرەکە تا براوسەر و پرۆکسی کاشی نەکەن و زانیاری نوێ بهێنن
-    const noCacheUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
-    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(noCacheUrl);
-    
-    const res = await fetch(proxyUrl, { cache: 'no-store' });
-    const text = await res.text();
     let codeVal = '';
     const m = text.match(/\b\d{4,8}\b/);
     if (m) {
