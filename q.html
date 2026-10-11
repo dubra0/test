@@ -300,6 +300,7 @@ const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return
 let lang = store.get('dubra_lang') || null;
 let state = { kind: 'loading' };
 let lastDetectedOtp = '';
+let autoRefreshTimer = null;
 
 function playNotificationSound() {
   try {
@@ -495,11 +496,18 @@ function render(){
       updateBtnEl.onclick = () => {
         updateBtnEl.classList.add('spinning');
         fetchOtp(otpLink, true);
-        setTimeout(() => updateBtnEl.classList.remove('spinning'), 400);
+        setTimeout(() => updateBtnEl.classList.remove('spinning'), 300);
       };
     }
     
+    // هێنانی سەرەتایی کۆد
     fetchOtp(otpLink, false);
+
+    // نوێکردنەوەی خۆکارانە لە پشتەوە هەموو 3 چرکە جارێک
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(() => {
+      fetchOtp(otpLink, false);
+    }, 3000);
   }
 
   supportContainer.innerHTML = `
@@ -537,7 +545,7 @@ function render(){
   });
 }
 
-// فەنکشنی خێراکراوی تایبەت بە اندروید کە بە شێوازی هاوکات (Parallel) کار دەکات
+// فەنکشنی زۆر خێرا (0.5 چرکە) بە بەکارهێنانی فرە-پرۆکسی هاوکات بۆ ئەندرۆید و ئایفۆن
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
