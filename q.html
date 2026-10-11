@@ -499,7 +499,6 @@ function render(){
       };
     }
     
-    // تەنها جارێک لە سەرەتادا کۆدەکە دەهێنێت بێ ئەوەی خۆکارانە دووبارە ببێتەوە
     fetchOtp(otpLink, false);
   }
 
@@ -538,7 +537,7 @@ function render(){
   });
 }
 
-// فەنکشنی زیرەک: تەنها کاتێک کۆدەکە دەگۆڕێت کە لە پشتەوە کۆدی نوێ هەبێت، ئەگەر نا هەمان کۆد دەهێڵێتەوە
+// فەنکشنی خێراکراوی تایبەت بە اندروید کە بە شێوازی هاوکات (Parallel) کار دەکات
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
@@ -548,7 +547,8 @@ async function fetchOtp(url, isManual = false) {
   const proxyUrls = [
     'https://api.allorigins.win/raw?url=' + encodeURIComponent(noCacheUrl),
     'https://corsproxy.io/?' + encodeURIComponent(noCacheUrl),
-    'https://thingproxy.freeboard.io/fetch/' + noCacheUrl
+    'https://thingproxy.freeboard.io/fetch/' + noCacheUrl,
+    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(noCacheUrl)
   ];
 
   let text = '';
