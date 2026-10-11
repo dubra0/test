@@ -270,7 +270,7 @@ const KEY = 'sb_publishable_HFxscwwTWxXEspJEnpJgFA_Ib4A5cAQ';
 
 const T = {
   ku: { dir:'rtl', code:'KU', title:'زانیاری کارت', checking:'پشکنین…',
-        email:'Email', password:'Password', otpTitle:'کۆدی دڵنیایی (OTP)', otpWait:'چاوەڕێی هاتنی کۆد...', copy:'کۆپی کردن', copied:'کۆپی کرا ✓',
+        email:'Email', password:'Password', otpTitle:'کۆدی دڵنیایی (OTP)', otpWait:'بۆ بینینی کۆد، دوگمەی نوێکردنەوە دابگرە...', copy:'کۆپی کردن', copied:'کۆپی کرا ✓',
         updateBtn:'نوێکردنەوە', invalid:'ئەم QR کۆدە دروست نییە یاخود بەردەست نییە', net:'پەیوەندی نەکرا. ئینتەرنێت بپشکنە.', error:'هەڵە', thanks:'سوپاس بۆ متمانەکەت', modalBtn:'تێگەیشتم، پیشاندانی زانیارییەکان',
         warningTitle:'⚠️ ئاگادارییەکی گرنگ', warningText:'تکایە بەهیچ شێوەیەک ئەم Apple ID له Settings ی موبایلەکەت داخل مەکە! تەنها لە App Store داخل بکە.<br><br>کاتی داخلکردنی، تکایە ڕاستەوخۆ بیخەرە سەر ژمارەی موبایلی خۆت.',
         supOpen:'پەیوەندی بە سەپۆرت (Support)', supTitle:'تکایە کێشەکەت دیاری بکە:',
@@ -278,7 +278,7 @@ const T = {
         supWait:'چاوەڕێ بکە...', supDone:'✅ داواکارییەکەت نێردرا بۆ سەپۆرت. بە زوویی چارەسەر دەکرێت.', supAlready:'داواکارییەکەت پێشتر نێردراوە.', supErr:'نەنێردرا، دووبارە هەوڵ بدەرەوە.',
         customPlaceholder:'پرسیار یان کێشەکەت لێرە بنووسە...' },
   ar: { dir:'rtl', code:'AR', title:'معلومات البطاقة', checking:'جارٍ التحقق…',
-        email:'Email', password:'Password', otpTitle:'رمز التحقق (OTP)', otpWait:'جاري انتظار الرمز...', copy:'نسخ', copied:'تم النسخ ✓',
+        email:'Email', password:'Password', otpTitle:'رمز التحقق (OTP)', otpWait:'لإظهار الرمز، اضغط على زر التحديث...', copy:'نسخ', copied:'تم النسخ ✓',
         updateBtn:'تحديث', invalid:'رمز QR هذا غير صالح أو غير موجود', net:'تعذّر الاتصال. تحقّق من الإنترنت.', error:'خطأ', thanks:'شكراً لثقَتِك', modalBtn:'فهمت، عرض المعلومات',
         warningTitle:'⚠️ تنبيه مهم', warningText:'يرجى عدم إدخال Apple ID هذا في إعدادات الهاتف (Settings) نهائياً! قم بإدخاله في App Store فقط.<br><br>عند الإدخال، يرجى وضعه مباشرة على رقم هاتفك.',
         supOpen:'الاتصال بالدعم (Support)', supTitle:'يرجى تحديد مشكلتك:',
@@ -286,7 +286,7 @@ const T = {
         supWait:'جاري الانتظار...', supDone:'✅ تم إرسال طلبك إلى الدعم. سيتم الحل قريباً.', supAlready:'تم إرسال طلبك مسبقاً.', supErr:'فشل الإرسال، حاول مجدداً.',
         customPlaceholder:'اكتب سؤالك أو مشكلتك هنا...' },
   en: { dir:'ltr', code:'EN', title:'Card details', checking:'Verifying…',
-        email:'Email', password:'Password', otpTitle:'Verification Code (OTP)', otpWait:'Waiting for code...', copy:'Copy', copied:'Copied ✓',
+        email:'Email', password:'Password', otpTitle:'Verification Code (OTP)', otpWait:'To see the code, click the update button...', copy:'Copy', copied:'Copied ✓',
         updateBtn:'Refresh', invalid:'This QR code is not valid or available', net:'Couldn’t connect. Check your internet.', error:'Error', thanks:'Thank you for your trust', modalBtn:'Got it, show details',
         warningTitle:'⚠ Important Warning', warningText:'Please do NOT sign in with this Apple ID in your phone Settings! Sign in via App Store only.<br><br>When signing in, please use your own mobile phone number directly.',
         supOpen:'Contact Support', supTitle:'Please select your issue:',
@@ -495,7 +495,7 @@ function render(){
       updateBtnEl.onclick = () => {
         updateBtnEl.classList.add('spinning');
         fetchOtp(otpLink, true);
-        setTimeout(() => updateBtnEl.classList.remove('spinning'), 400);
+        setTimeout(() => updateBtnEl.classList.remove('spinning'), 600);
       };
     }
     fetchOtp(otpLink, false);
@@ -536,30 +536,14 @@ function render(){
   });
 }
 
-// فەنکشنی زۆر خێرا بۆ هێنانی کۆد بە بەکارهێنانی دوو پرۆکسی جیاواز بۆ دڵنیابوون لە کارکردنی بێ کێشە
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
   const t = T[lang || 'ku'];
-
-  const noCacheUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
-  const proxyUrls = [
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(noCacheUrl),
-    'https://corsproxy.io/?' + encodeURIComponent(noCacheUrl)
-  ];
-
-  let text = '';
-  for (let i = 0; i < proxyUrls.length; i++) {
-    try {
-      const res = await fetch(proxyUrls[i], { cache: 'no-store' });
-      if (res.ok) {
-        text = await res.text();
-        if (text) break;
-      }
-    } catch(err) {}
-  }
-
   try {
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    const res = await fetch(proxyUrl, { cache: 'no-store' });
+    const text = await res.text();
     let codeVal = '';
     const m = text.match(/\b\d{4,8}\b/);
     if (m) {
@@ -574,7 +558,7 @@ async function fetchOtp(url, isManual = false) {
 
     if (codeVal) {
       if (codeVal !== lastDetectedOtp || isManual) {
-        if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '' && !isManual) {
+        if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '') {
           playNotificationSound();
         }
         lastDetectedOtp = codeVal;
@@ -590,10 +574,14 @@ async function fetchOtp(url, isManual = false) {
         if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
       };
     } else {
-      row.innerHTML = `<div class="otp-empty">${t.otpWait}</div>`;
+      row.innerHTML = `
+        <a href="${esc(url)}" target="_blank" style="color:#34d399;font-weight:700;font-size:0.9rem;text-decoration:underline">کردنەوەی بەستەری OTP لە پەڕەیەکی نوێ</a>
+      `;
     }
   } catch(e) {
-    row.innerHTML = `<div class="otp-empty">${t.otpWait}</div>`;
+    row.innerHTML = `
+      <a href="${esc(url)}" target="_blank" style="color:#34d399;font-weight:700;font-size:0.9rem;text-decoration:underline">کردنەوەی بەستەری OTP لە پەڕەیەکی نوێ</a>
+    `;
   }
 }
 
