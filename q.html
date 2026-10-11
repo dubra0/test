@@ -494,9 +494,8 @@ function render(){
     if (updateBtnEl) {
       updateBtnEl.onclick = () => {
         updateBtnEl.classList.add('spinning');
-        // لێرەدا فەنکشنەکە بە مەرجی isManual=true بانگ دەکەین تا هەمیشە دەستبەجێ دووبارە کۆدەکە بهێنێت
         fetchOtp(otpLink, true);
-        setTimeout(() => updateBtnEl.classList.remove('spinning'), 600);
+        setTimeout(() => updateBtnEl.classList.remove('spinning'), 400);
       };
     }
     fetchOtp(otpLink, false);
@@ -537,13 +536,16 @@ function render(){
   });
 }
 
-// فەنکشنی نوێکراوە کە بە مەرجی isManual ڕاستەوخۆ نوێترین کۆد دەهێنێت تەنانەت ئەگەر دووبارەش بێت
+// فەنکشنی خێرا بۆ هێنانی کۆد بەبێ کاش و بە پەیوەندی ڕاستەوخۆ بە پرۆکسی
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
   const t = T[lang || 'ku'];
   try {
-    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    // زیادکردنی ڕێکەوتی هەڕەمەکی بۆ کۆتایی بەستەرەکە تا براوسەر و پرۆکسی کاشی نەکەن و زانیاری نوێ بهێنن
+    const noCacheUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(noCacheUrl);
+    
     const res = await fetch(proxyUrl, { cache: 'no-store' });
     const text = await res.text();
     let codeVal = '';
@@ -559,7 +561,6 @@ async function fetchOtp(url, isManual = false) {
     }
 
     if (codeVal) {
-      // ئەگەر دەستکاری کرابێت (isManual) یان کۆدەکە گۆڕابێت، ڕەفتار دەکات
       if (codeVal !== lastDetectedOtp || isManual) {
         if (codeVal !== lastDetectedOtp && lastDetectedOtp !== '' && !isManual) {
           playNotificationSound();
