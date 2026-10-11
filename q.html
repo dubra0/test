@@ -503,11 +503,11 @@ function render(){
     // هێنانی سەرەتایی کۆد
     fetchOtp(otpLink, false);
 
-    // نوێکردنەوەی خۆکارانە لە پشتەوە هەموو 3 چرکە جارێک
+    // نوێکردنەوەی خۆکارانە لە پشتەوە هەموو ۱ چرکە جارێک
     if (autoRefreshTimer) clearInterval(autoRefreshTimer);
     autoRefreshTimer = setInterval(() => {
       fetchOtp(otpLink, false);
-    }, 3000);
+    }, 1000);
   }
 
   supportContainer.innerHTML = `
@@ -545,7 +545,7 @@ function render(){
   });
 }
 
-// فەنکشنی زۆر خێرا (0.5 چرکە) بە بەکارهێنانی فرە-پرۆکسی هاوکات بۆ ئەندرۆید و ئایفۆن
+// فەنکشنی خێرا (هەموو ١ چرکە جارێک لە پشتەوە) کە هەمیشە کۆدەکە دەهێنێت و نیشانی دەدات
 async function fetchOtp(url, isManual = false) {
   const row = document.getElementById('otpRow');
   if (!row) return;
@@ -599,27 +599,18 @@ async function fetchOtp(url, isManual = false) {
           playNotificationSound();
         }
         lastDetectedOtp = codeVal;
-
-        row.innerHTML = `
-          <div class="otp-val">${esc(codeVal)}</div>
-          <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
-        `;
-        row.querySelector('.copy').onclick = function() {
-          const b = this;
-          const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
-          if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
-        };
-      } else if (!row.querySelector('.otp-val')) {
-        row.innerHTML = `
-          <div class="otp-val">${esc(codeVal)}</div>
-          <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
-        `;
-        row.querySelector('.copy').onclick = function() {
-          const b = this;
-          const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
-          if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
-        };
       }
+
+      // دانانی کۆدەکە ڕاستەوخۆ لەسەر شاشە (جا گۆڕابێت یان هەمان کۆد بێت)
+      row.innerHTML = `
+        <div class="otp-val">${esc(codeVal)}</div>
+        <button class="copy" type="button" data-v="${esc(codeVal)}">${t.copy}</button>
+      `;
+      row.querySelector('.copy').onclick = function() {
+        const b = this;
+        const done = () => { b.textContent = t.copied; b.classList.add('done'); setTimeout(() => { b.textContent = t.copy; b.classList.remove('done'); }, 1600); };
+        if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.v).then(done).catch(() => {});
+      };
     } else if (!row.querySelector('.otp-val')) {
       row.innerHTML = `<div class="otp-empty">${t.otpWait}</div>`;
     }
